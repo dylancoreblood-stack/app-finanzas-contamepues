@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Finanzas Fáciles — Control Financiero Inteligente</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  
+  <!-- CONFIGURACIÓN PWA Y APPLE NATIVE -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Finanzas">
+  <meta name="theme-color" content="#141413" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#F6F5F0" media="(prefers-color-scheme: light)">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="Finanzas Fáciles">
+  
+  <!-- Icono SVG embebido de alta resolución (moneda / finanzas) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%2318A957'/><text x='50%' y='55%' font-size='50' font-weight='bold' font-family='system-ui' fill='white' text-anchor='middle' dominant-baseline='middle'>$</text></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23141413'/><circle cx='50' cy='50' r='36' fill='%2318A957'/><text x='50%' y='55%' font-size='42' font-weight='800' font-family='system-ui' fill='white' text-anchor='middle' dominant-baseline='middle'>$</text></svg>">
+
+  <style>
+    :root {
+      --bg: #F6F5F0;
+      --card: #FFFFFF;
+      --card-subtle: #EFECE6;
+      --text: #141413;
+      --muted: #78756E;
+      --border: rgba(20, 20, 19, 0.08);
+      --accent: #141413;
+      --accent-text: #FFFFFF;
+      --green: #18A957;
+      --green-dark: #128744;
+      --green-soft: rgba(24, 169, 87, 0.12);
+      --red: #E5484D;
+      --red-soft: rgba(229, 72, 77, 0.12);
+      --amber: #F59E0B;
+      --shadow: 0 8px 24px rgba(20, 20, 19, 0.05);
+    }
+
+    body.dark {
+      --bg: #0B0B0C;
+      --card: #161618;
+      --card-subtle: #222226;
+      --text: #F5F5F7;
+      --muted: #8E8E93;
+      --border: rgba(255, 255, 255, 0.09);
+      --accent: #F5F5F7;
+      --accent-text: #0B0B0C;
+      --green: #30D158;
+      --green-dark: #24B248;
+      --green-soft: rgba(48, 209, 88, 0.16);
+      --red: #FF453A;
+      --red-soft: rgba(255, 69, 58, 0.16);
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      padding: env(safe-area-inset-top, 16px) 14px calc(env(safe-area-inset-bottom, 16px) + 120px) 14px;
+      transition: background-color 0.25s, color 0.25s;
+      letter-spacing: -0.015em;
+    }
+
+    .app-shell { max-width: 980px; margin: 0 auto; }
+
+    .topbar {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .topbar-row-1 {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .brand-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 999px;
+      box-shadow: var(--shadow);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .email-sync-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--green-soft);
+      color: var(--green);
+      border: 1px solid rgba(24, 169, 87, 0.25);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); transition: background 0.2s; flex-shrink: 0; }
+    .status-dot.syncing { background: var(--amber); transform: scale(1.25); }
+
+    .month-pill {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 7px 14px;
+      border-radius: 999px;
+      box-shadow: var(--shadow);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .month-pill select {
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-weight: 700;
+      font-size: 13px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+    .top-actions::-webkit-scrollbar { display: none; }
+
+    .tool-btn {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 13px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+      transition: transform 0.12s, background-color 0.15s;
+      flex-shrink: 0;
+    }
+    .tool-btn:hover { background: var(--card-subtle); }
+    .tool-btn:active { transform: scale(0.95); }
+    .tool-btn .ico { font-size: 14px; }
+    .tool-btn.highlight {
+      background: var(--green-soft);
+      border-color: rgba(24, 169, 87, 0.35);
+      color: var(--green);
+    }
+
+    .hero-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 28px 20px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      margin-bottom: 18px;
+    }
+    .hero-eyebrow { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+    .hero-amount { font-size: clamp(34px, 7vw, 54px); font-weight: 800; letter-spacing: -0.04em; margin: 8px 0 6px 0; line-height: 1.05; }
+    .hero-sub { font-size: 13px; color: var(--muted); font-weight: 500; margin-bottom: 20px; }
+
+    .promo-scanner-bar {
+      background: var(--green-soft);
+      border: 1px solid rgba(24, 169, 87, 0.25);
+      border-radius: 18px;
+      padding: 12px 16px;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      text-align: left;
+    }
+    .promo-scanner-text { font-size: 12px; color: var(--text); line-height: 1.4; flex: 1; min-width: 210px; }
+    .promo-scanner-btn {
+      background: var(--green);
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .hero-pills { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; text-align: left; }
+    .mini-stat { background: var(--bg); padding: 15px 16px; border-radius: 20px; border: 1px solid var(--border); }
+    .mini-label { font-size: 12px; color: var(--muted); font-weight: 600; display: flex; align-items: center; gap: 6px; }
+    .mini-val { font-size: 19px; font-weight: 800; margin-top: 4px; letter-spacing: -0.02em; }
+    .mini-foot { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+    .pay-progress-wrap {
+      margin-top: 16px; background: var(--bg); padding: 14px 16px;
+      border-radius: 18px; text-align: left; border: 1px solid var(--border);
+    }
+    .pay-progress-head { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; margin-bottom: 8px; gap: 8px; flex-wrap: wrap; }
+    .pay-track { height: 10px; background: var(--card-subtle); border-radius: 999px; overflow: hidden; }
+    .pay-fill { height: 100%; background: var(--green); border-radius: 999px; width: 0%; transition: width 0.35s ease; }
+
+    .bento-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .bento-card { background: var(--card); border: 1px solid var(--border); border-radius: 26px; padding: 20px; box-shadow: var(--shadow); }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; gap: 8px; flex-wrap: wrap; }
+    .card-title { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; }
+
+    .meta-pill-row {
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--bg); padding: 12px 14px; border-radius: 16px;
+      margin-bottom: 8px; cursor: pointer; border: 1px solid var(--border);
+      gap: 8px;
+    }
+
+    .cat-item { margin-bottom: 12px; }
+    .cat-top { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-bottom: 5px; gap: 6px; }
+    .cat-track { height: 8px; background: var(--bg); border-radius: 99px; overflow: hidden; }
+
+    .chips-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px; scrollbar-width: none; }
+    .chips-scroll::-webkit-scrollbar { display: none; }
+    .chip {
+      background: var(--card); border: 1px solid var(--border); color: var(--muted);
+      padding: 8px 14px; border-radius: 999px; font-size: 13px; font-weight: 600;
+      white-space: nowrap; cursor: pointer; flex-shrink: 0;
+    }
+    .chip.active { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+
+    .filter-bar { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+    .search-pill {
+      flex: 1; min-width: 180px; background: var(--card); border: 1px solid var(--border);
+      color: var(--text); padding: 11px 15px; border-radius: 16px; font-size: 14px; outline: none;
+    }
+
+    .tx-list { display: flex; flex-direction: column; gap: 10px; }
+    .tx-item {
+      background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+      padding: 14px 15px; display: flex; align-items: center; justify-content: space-between;
+      gap: 10px; box-shadow: var(--shadow); flex-wrap: wrap;
+    }
+    .tx-item.is-paid { opacity: 0.58; background: var(--bg); }
+    .tx-item.is-paid .tx-title { text-decoration: line-through; color: var(--muted); }
+
+    .tx-left { display: flex; align-items: center; gap: 10px; min-width: 180px; flex: 1; }
+    .ios-check {
+      appearance: none; -webkit-appearance: none; width: 24px; height: 24px;
+      border-radius: 50%; border: 2px solid var(--muted); cursor: pointer;
+      display: grid; place-content: center; flex-shrink: 0;
+    }
+    .ios-check:checked { background-color: var(--green); border-color: var(--green); }
+    .ios-check:checked::before { content: "✓"; color: white; font-size: 13px; font-weight: 800; }
+
+    .tx-emoji {
+      width: 40px; height: 40px; border-radius: 13px; background: var(--bg);
+      display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;
+    }
+    .tx-info { min-width: 0; flex: 1; }
+    .tx-title { font-size: 15px; font-weight: 600; word-break: break-word; }
+    .tx-cat { font-size: 12px; color: var(--muted); font-weight: 500; margin-top: 2px; }
+
+    .tx-right { text-align: right; display: flex; align-items: center; gap: 10px; margin-left: auto; }
+    .tx-amount { font-size: 16px; font-weight: 800; letter-spacing: -0.02em; }
+    .tx-actions { display: flex; gap: 6px; }
+    .mini-action {
+      background: var(--bg); border: 1px solid var(--border); color: var(--text);
+      padding: 5px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; cursor: pointer;
+    }
+
+    .mail-card {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 22px; padding: 16px; display: flex; flex-direction: column; gap: 12px;
+    }
+    .mail-card.imported { opacity: 0.58; }
+
+    .mail-summary-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .mail-summary-title { font-size: 15px; font-weight: 800; color: var(--text); }
+    .mail-summary-sub { font-size: 12px; color: var(--muted); margin-top: 3px; font-weight: 500; }
+    .mail-summary-amount { font-size: 20px; font-weight: 800; letter-spacing: -0.03em; }
+
+    .mail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+    .mail-input {
+      width: 100%; background: var(--card); border: 1px solid var(--border);
+      color: var(--text); padding: 9px 11px; border-radius: 12px; font-size: 13px; font-weight: 600; outline: none;
+    }
+    .pill-badge {
+      display: inline-block; font-size: 11px; font-weight: 700;
+      padding: 4px 10px; border-radius: 99px; background: var(--card); border: 1px solid var(--border);
+    }
+
+    .floating-dock {
+      position: fixed; bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); left: 50%; transform: translateX(-50%);
+      background: var(--card); border: 1px solid var(--border);
+      padding: 8px 10px; border-radius: 999px; display: flex; align-items: center;
+      gap: 6px; box-shadow: 0 14px 36px rgba(0, 0, 0, 0.22); z-index: 50;
+      max-width: 96vw; overflow-x: auto; scrollbar-width: none;
+    }
+    .floating-dock::-webkit-scrollbar { display: none; }
+
+    .dock-tab {
+      background: transparent; border: none; color: var(--muted);
+      padding: 10px 14px; border-radius: 999px; font-size: 13px; font-weight: 700;
+      cursor: pointer; white-space: nowrap; flex-shrink: 0;
+    }
+    .dock-tab.active { background: var(--accent); color: var(--accent-text); }
+
+    .dock-add-cta {
+      background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+      color: #FFFFFF;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      box-shadow: 0 6px 18px rgba(24, 169, 87, 0.38);
+      animation: subtlePulse 2.8s infinite ease-in-out;
+    }
+    .dock-add-cta:active { transform: scale(0.95); }
+
+    @keyframes subtlePulse {
+      0%, 100% { box-shadow: 0 6px 18px rgba(24, 169, 87, 0.35); }
+      50% { box-shadow: 0 8px 24px rgba(24, 169, 87, 0.6); }
+    }
+
+    .view-pane { display: none; }
+    .view-pane.active { display: block; }
+
+    .history-bars {
+      display: flex; align-items: flex-end; gap: 14px; height: 190px;
+      padding: 20px 8px 8px 8px; overflow-x: auto; border-bottom: 1px solid var(--border); margin-bottom: 18px;
+    }
+    .hbar-col { flex: 1; min-width: 72px; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; }
+    .hbar-pair { display: flex; align-items: flex-end; gap: 5px; height: 135px; width: 100%; justify-content: center; }
+    .hbar { width: 16px; border-radius: 6px 6px 2px 2px; }
+    .hbar-lbl { font-size: 11px; font-weight: 600; color: var(--muted); margin-top: 8px; text-align: center; max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.58); backdrop-filter: blur(4px);
+      display: none; align-items: center; justify-content: center; padding: 14px; z-index: 99999;
+    }
+    .modal-backdrop.active { display: flex; }
+    .modal-sheet {
+      background: var(--card); border: 1px solid var(--border); border-radius: 26px;
+      padding: 22px; width: 100%; max-width: 460px; box-shadow: var(--shadow);
+      max-height: 90vh; overflow-y: auto; position: relative;
+    }
+    .field { margin-top: 12px; }
+    .field label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 5px; }
+    .field input, .field select {
+      width: 100%; background: var(--bg); border: 1px solid var(--border);
+      color: var(--text); padding: 11px 14px; border-radius: 14px; font-size: 14px; outline: none;
+    }
+    .btn-primary { background: var(--accent); color: var(--accent-text); border: none; padding: 11px 16px; border-radius: 14px; font-weight: 700; font-size: 13px; cursor: pointer; }
+    .btn-green { background: var(--green); color: white; border: none; padding: 11px 16px; border-radius: 14px; font-weight: 700; font-size: 13px; cursor: pointer; }
+    .btn-ghost { background: var(--bg); color: var(--muted); border: 1px solid var(--border); padding: 11px 16px; border-radius: 14px; font-weight: 600; font-size: 13px; cursor: pointer; }
+    .error-banner { display: none; background: var(--red-soft); color: var(--red); padding: 12px 16px; border-radius: 16px; margin-bottom: 16px; font-size: 13px; font-weight: 600; }
+
+    .icon-guide-list { text-align: left; display: flex; flex-direction: column; gap: 8px; margin: 12px 0; }
+    .icon-guide-item {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 14px;
+      padding: 9px 12px; font-size: 12px; line-height: 1.4;
+    }
+
+    .install-pill-badge {
+      display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px;
+      background: var(--green-soft); color: var(--green); border-radius: 999px;
+      font-size: 11px; font-weight: 800; margin-bottom: 8px;
+    }
+
+    @media (max-width: 720px) {
+      .bento-grid { grid-template-columns: 1fr; }
+      .hero-card { padding: 22px 16px; border-radius: 24px; }
+      .topbar-row-1 { flex-direction: column; align-items: stretch; }
+      .brand-group { justify-content: space-between; }
+      .month-pill { justify-content: space-between; width: 100%; }
+      .dock-tab { padding: 9px 11px; font-size: 12px; }
+      .dock-add-cta { padding: 9px 14px; font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-shell">
+    <div id="error-banner" class="error-banner"></div>
+
+    <header class="topbar">
+      <div class="topbar-row-1">
+        <div class="brand-group">
+          <div class="brand-pill">
+            <span id="sync-dot" class="status-dot"></span>
+            <span id="sync-text">Finanzas Fáciles</span>
+          </div>
+          <div class="email-sync-pill" title="Cuenta sincronizada de forma segura">
+            <span>📧</span>
+            <strong id="synced-email-label">Sincronizando...</strong>
+          </div>
+        </div>
+
+        <div class="month-pill">
+          <span style="font-size:14px;">📅 Mes:</span>
+          <select id="sheet-selector" onchange="onChangeSheet()"></select>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <button id="btn-install-header" class="tool-btn highlight" onclick="openInstallGuide()">
+          <span class="ico">📱</span><span>Instalar App</span>
+        </button>
+        <button class="tool-btn" onclick="openOnboardingModal()">
+          <span class="ico">✨</span><span>Tutorial</span>
+        </button>
+        <button class="tool-btn" onclick="openSetupModal()">
+          <span class="ico">⚙️</span><span>Sueldo y Metas</span>
+        </button>
+        <button class="tool-btn" onclick="openNewMonthModal()">
+          <span class="ico">📋</span><span>Nuevo Mes</span>
+        </button>
+        <button class="tool-btn" onclick="loadFromSheets(currentSheet)">
+          <span class="ico">↻</span><span>Actualizar</span>
+        </button>
+        <button class="tool-btn" onclick="toggleTheme()">
+          <span class="ico">◐</span><span>Tema</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- VISTA 1: MES ACTUAL -->
+    <div id="view-control" class="view-pane active">
+      <div class="promo-scanner-bar">
+        <div class="promo-scanner-text">
+          <strong>🔥 ¡Lectura Automática!</strong> Detecta compras de Bancolombia, Nu, PSE y facturas desde tu correo sin digitar nada.
+        </div>
+        <button class="promo-scanner-btn" onclick="switchView('emails', document.getElementById('dock-btn-emails'))">
+          📥 Escanear Correo ➔
+        </button>
+      </div>
+
+      <section class="hero-card">
+        <div id="title-cell-badge" class="hero-eyebrow">DINERO LIBRE DISPONIBLE</div>
+        <div id="kpi-libre" class="hero-amount">$0</div>
+        <div id="kpi-libre-pct" class="hero-sub">Calculando flujo del mes...</div>
+
+        <div class="hero-pills">
+          <div class="mini-stat">
+            <div class="mini-label"><span style="color:var(--green);">●</span> Ingresos del Mes</div>
+            <div id="kpi-ingresos" class="mini-val">$0</div>
+            <div id="kpi-ingresos-recibidos" class="mini-foot">Recibido: $0</div>
+          </div>
+
+          <div class="mini-stat">
+            <div class="mini-label"><span style="color:var(--red);">●</span> Compromisos y Gastos</div>
+            <div id="kpi-egresos" class="mini-val">$0</div>
+            <div id="txt-pendiente" class="mini-foot">Por pagar: $0</div>
+          </div>
+        </div>
+
+        <div class="pay-progress-wrap">
+          <div class="pay-progress-head">
+            <span>Progreso de pagos del mes</span>
+            <span id="txt-pagado">0% pagado</span>
+          </div>
+          <div class="pay-track">
+            <div id="bar-pagado" class="pay-fill"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="bento-grid">
+        <div class="bento-card">
+          <div class="card-header">
+            <span class="card-title">Distribución de Gastos</span>
+            <span style="font-size:12px;color:var(--muted);">Por categoría</span>
+          </div>
+          <div id="category-breakdown"></div>
+        </div>
+
+        <div class="bento-card">
+          <div class="card-header">
+            <span class="card-title">Fondos y Metas</span>
+            <span id="kpi-metas-total" style="font-size:15px;font-weight:800;color:var(--green);">$0</span>
+          </div>
+          <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">Toca cualquier fondo para editar su saldo acumulado</p>
+          <div id="metas-list"></div>
+        </div>
+      </section>
+
+      <section>
+        <div class="card-header" style="margin-bottom:10px;padding:0 4px;">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <span class="card-title" style="font-size:19px;">Movimientos del Mes</span>
+            <span id="tx-count-label" style="font-size:12px;color:var(--muted);font-weight:600;">0 registros</span>
+          </div>
+          <button class="btn-green" onclick="openModal()" style="padding:8px 14px;font-size:12px;">
+            ＋ Añadir Movimiento
+          </button>
+        </div>
+
+        <div id="category-chips" class="chips-scroll"></div>
+
+        <div class="filter-bar">
+          <input id="search-input" class="search-pill" type="text" oninput="renderUI()" placeholder="🔍 Buscar gasto, servicio o deuda...">
+          <select id="filter-status" class="search-pill" style="flex:0 0 auto;width:auto;font-weight:600;cursor:pointer;" onchange="renderUI()">
+            <option value="ALL">Todos los estados</option>
+            <option value="PENDING">Solo pendientes por pagar</option>
+            <option value="PAID">Solo ya pagados</option>
+          </select>
+        </div>
+
+        <div id="transactions-list" class="tx-list"></div>
+      </section>
+    </div>
+
+    <!-- VISTA 2: ESCÁNER DE CORREOS Y PASARELAS -->
+    <div id="view-emails" class="view-pane">
+      <div class="bento-card">
+        <div class="card-header">
+          <div>
+            <span class="card-title" style="font-size:18px;">📥 Escáner de Notificaciones Bancarias</span>
+            <p style="font-size:12px;color:var(--muted);margin-top:3px;">
+              Lee de forma 100% privada las notificaciones de tu correo vinculado
+            </p>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <select id="email-mode" class="mail-input" style="width:auto;" onchange="fetchEmails()">
+              <option value="ALL" selected>🌐 Todos los Bancos y PSE</option>
+              <option value="BANCOLOMBIA">🏦 Solo Bancolombia</option>
+            </select>
+            <select id="email-days" class="mail-input" style="width:auto;" onchange="fetchEmails()">
+              <option value="7" selected>Últimos 7 días</option>
+              <option value="15">Últimos 15 días</option>
+              <option value="30">Últimos 30 días</option>
+            </select>
+            <button class="btn-primary" onclick="fetchEmails()">↻ Escanear</button>
+          </div>
+        </div>
+
+        <div id="email-source-chips" class="chips-scroll" style="margin-bottom:10px;">
+          <button class="chip active" onclick="filterEmailsBy('ALL', this)">✨ Todos</button>
+          <button class="chip" onclick="filterEmailsBy('PSE', this)">🌐 PSE / Pasarelas</button>
+          <button class="chip" onclick="filterEmailsBy('CARD', this)">💳 Tarjetas Débito/Crédito</button>
+          <button class="chip" onclick="filterEmailsBy('BANCOLOMBIA', this)">🏦 Bancos</button>
+          <button class="chip" onclick="filterEmailsBy('OTHER', this)">⚡ Servicios</button>
+        </div>
+
+        <div id="emails-status" style="font-size:13px;color:var(--muted);margin-bottom:14px;">
+          Pulsa "↻ Escanear" para detectar tus transacciones bancarias recientes.
+        </div>
+
+        <div id="emails-list" class="tx-list"></div>
+      </div>
+    </div>
+
+    <!-- VISTA 3: COMPARAR HISTÓRICO -->
+    <div id="view-history" class="view-pane">
+      <div class="bento-card" style="margin-bottom:18px;">
+        <div class="card-header">
+          <span class="card-title">⚖️ Comparar Mes a Mes</span>
+          <span style="font-size:12px;color:var(--muted);">Variación directa</span>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;">
+          <div class="field" style="margin:0;">
+            <label>Mes Base</label>
+            <select id="compare-month-1" onchange="renderHistoryView()"></select>
+          </div>
+          <div class="field" style="margin:0;">
+            <label>Mes a Comparar</label>
+            <select id="compare-month-2" onchange="renderHistoryView()"></select>
+          </div>
+        </div>
+
+        <div id="compare-result-cards" class="hero-pills"></div>
+      </div>
+
+      <div class="bento-card">
+        <div class="card-header">
+          <span class="card-title">📈 Evolución Histórica</span>
+          <div style="font-size:11px;color:var(--muted);display:flex;gap:10px;">
+            <span><strong style="color:var(--green);">●</strong> Ingresos</span>
+            <span><strong style="color:var(--red);">●</strong> Egresos</span>
+          </div>
+        </div>
+
+        <div id="history-bars-chart" class="history-bars"></div>
+        <div id="history-list" class="tx-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BARRA INFERIOR FLOTANTE -->
+  <nav class="floating-dock">
+    <button id="dock-btn-control" class="dock-tab active" onclick="switchView('control', this)">💳 Mes Actual</button>
+    <button id="dock-btn-emails" class="dock-tab" onclick="switchView('emails', this)">📥 Correos y PSE</button>
+    <button id="dock-btn-history" class="dock-tab" onclick="switchView('history', this)">📊 Comparar</button>
+    <button class="dock-add-cta" onclick="openModal()" title="Registrar un nuevo gasto o ingreso">
+      <span style="font-size:16px;line-height:1;">＋</span>
+      <span>Añadir Gasto</span>
+    </button>
+  </nav>
+
+  <!-- Modal 1: Nuevo Movimiento -->
+  <div id="modal" class="modal-backdrop">
+    <div class="modal-sheet">
+      <h3 style="font-size:18px;font-weight:800;">＋ Añadir Movimiento</h3>
+      <p style="font-size:12px;color:var(--muted);margin-top:2px;">Se guardará en la hoja <strong id="modal-sheet-name"></strong></p>
+
+      <div class="field">
+        <label>Tipo de Movimiento</label>
+        <select id="new-tipo">
+          <option value="Egreso">💸 Gasto / Compromiso (Egreso)</option>
+          <option value="Ingreso">💰 Ingreso / Abono</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Categoría</label>
+        <select id="new-cat">
+          <option value="Gastos opcionales">🛍️ Gastos opcionales</option>
+          <option value="Gastos fijos">🏠 Gastos fijos</option>
+          <option value="Servicios">⚡ Servicios</option>
+          <option value="Deudas">💳 Deudas</option>
+          <option value="Ahorro">🎯 Ahorro</option>
+          <option value="Ingreso Sueldo">💰 Ingreso Sueldo</option>
+          <option value="Ingreso Adicional">💰 Ingreso Adicional</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Descripción (¿En qué fue?)</label>
+        <input id="new-desc" type="text" placeholder="Ej. Mercado, Café, Pago Arriendo...">
+      </div>
+      <div class="field">
+        <label>Monto en Pesos (COP)</label>
+        <input id="new-monto" type="number" placeholder="Ej. 45000">
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:20px;">
+        <button class="btn-ghost" onclick="closeModal()">Cancelar</button>
+        <button id="btn-save-new" class="btn-green" onclick="addTransaction()">Guardar Movimiento</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Duplicar Mes -->
+  <div id="modal-month" class="modal-backdrop">
+    <div class="modal-sheet">
+      <h3 style="font-size:18px;font-weight:800;">📋 Crear Nuevo Mes</h3>
+      <p style="font-size:12px;color:var(--muted);margin-top:4px;">
+        Duplica tu hoja <strong id="dup-source-name"></strong> conservando tus gastos fijos pero reiniciando los pagos en <code>Pendiente</code>.
+      </p>
+      <div class="field">
+        <label>Nombre de la nueva pestaña</label>
+        <input id="dup-sheet-name" type="text" placeholder="Ej. noviembre 429/840">
+      </div>
+      <div class="field">
+        <label>Título superior (Celda A1)</label>
+        <input id="dup-title-cell" type="text" placeholder="Ej. Noviembre 2026 Mes 429/840">
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:20px;">
+        <button class="btn-ghost" onclick="closeNewMonthModal()">Cancelar</button>
+        <button id="btn-dup-month" class="btn-primary" onclick="confirmDuplicateMonth()">Crear Mes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: Configurar Metas y Sueldo -->
+  <div id="modal-setup" class="modal-backdrop">
+    <div class="modal-sheet">
+      <h3 style="font-size:18px;font-weight:800;">⚙️ Configurar Sueldo y Metas</h3>
+      <p style="font-size:12px;color:var(--muted);margin-top:4px;">
+        Personaliza tu sueldo mensual base y los nombres de tus 3 fondos de ahorro principales.
+      </p>
+
+      <div class="field">
+        <label>Sueldo mensual base (COP)</label>
+        <input id="setup-sueldo" type="number" placeholder="Ej. 3500000" value="0">
+      </div>
+
+      <div class="field">
+        <label>Nombres de tus 3 Fondos / Metas</label>
+        <input id="setup-meta-1" type="text" value="Fondo de Emergencia" style="margin-bottom:6px;">
+        <input id="setup-meta-2" type="text" value="Meta Principal (Auto / Viaje)" style="margin-bottom:6px;">
+        <input id="setup-meta-3" type="text" value="Inversiones / Cuentas">
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:20px;">
+        <button class="btn-ghost" onclick="closeSetupModal()">Cancelar</button>
+        <button id="btn-run-setup" class="btn-green" onclick="confirmSetupFromScratch()">Guardar Cambios</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 4: Tutorial de Bienvenida -->
+  <div id="modal-onboarding" class="modal-backdrop">
+    <div class="modal-sheet" style="max-width:500px;text-align:center;">
+      <div class="onboarding-step" data-step="1">
+        <div style="font-size:44px;margin-bottom:10px;">✨</div>
+        <h3 style="font-size:21px;font-weight:800;margin-bottom:8px;">Bienvenido a Finanzas Fáciles</h3>
+        <p style="font-size:14px;color:var(--muted);line-height:1.5;margin-bottom:16px;">
+          Tu aplicación financiera conectada a tu propia hoja de Google y a tus notificaciones de correo para controlar tus gastos sin esfuerzo.
+        </p>
+      </div>
+
+      <div class="onboarding-step" data-step="2" style="display:none;">
+        <div style="font-size:40px;margin-bottom:6px;">🧭</div>
+        <h3 style="font-size:19px;font-weight:800;margin-bottom:6px;">Guía Rápida de Funciones</h3>
+        <div class="icon-guide-list">
+          <div class="icon-guide-item"><strong>⚙️ Sueldo y Metas:</strong> Define tu ingreso mensual y tus 3 fondos de ahorro.</div>
+          <div class="icon-guide-item"><strong>📋 Nuevo Mes:</strong> Duplica el mes actual con los pagos pendientes para el nuevo periodo.</div>
+          <div class="icon-guide-item"><strong>＋ Añadir Gasto:</strong> (Botón verde inferior) Registra cualquier compra en 5 segundos.</div>
+          <div class="icon-guide-item"><strong>📥 Correos y PSE:</strong> Agrega automáticamente compras y pagos con 1 solo toque.</div>
+          <div class="icon-guide-item"><strong>📱 Instalar App:</strong> Úsala como una app nativa en tu pantalla de inicio.</div>
+        </div>
+      </div>
+
+      <div class="onboarding-step" data-step="3" style="display:none;">
+        <div style="font-size:44px;margin-bottom:10px;">📥</div>
+        <h3 style="font-size:20px;font-weight:800;margin-bottom:8px;">Escáner de Notificaciones</h3>
+        <p style="font-size:14px;color:var(--muted);line-height:1.5;margin-bottom:16px;">
+          En la pestaña <b>"📥 Correos y PSE"</b>, la app detecta tus compras con tarjeta y PSE de forma 100% privada dentro de tu propio Google, para que solo toques <b>"＋ Agregar a Hoja"</b> sin digitar nada.
+        </p>
+      </div>
+
+      <div class="onboarding-step" data-step="4" style="display:none;">
+        <div style="font-size:44px;margin-bottom:10px;">🔒</div>
+        <h3 style="font-size:20px;font-weight:800;margin-bottom:8px;">100% Privado y Seguro</h3>
+        <p style="font-size:14px;color:var(--text);font-weight:600;line-height:1.5;margin-bottom:8px;">
+          ¿Por qué Google te pide autorizar al entrar?
+        </p>
+        <p style="font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:14px;">
+          Porque la app leerá únicamente tus notificaciones bancarias de forma 100% privada dentro de tu propio correo para que no tengas que digitar tus compras. Ningún dato ni contraseña sale a servidores externos; todo vive en tu propia cuenta.
+        </p>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;">
+        <button id="onboarding-prev" class="btn-ghost" style="visibility:hidden;">Anterior</button>
+        <span id="onboarding-counter" style="font-size:12px;color:var(--muted);font-weight:600;">Paso 1 de 4</span>
+        <button id="onboarding-next" class="btn-green">Siguiente ➔</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 5: Guía Inteligente de Instalación Celular -->
+  <div id="modal-install" class="modal-backdrop">
+    <div class="modal-sheet">
+      <div class="install-pill-badge">🚀 Instalación Rápida</div>
+      <h3 style="font-size:19px;font-weight:800;">Fija la App en tu Celular</h3>
+      <p style="font-size:13px;color:var(--muted);margin-top:4px;">
+        Accede en pantalla completa sin barras de navegador, exactamente como una app nativa:
+      </p>
+
+      <!-- Botón de instalación nativa 1-clic (Android / navegadores modernos) -->
+      <div id="android-native-install-box" style="display:none;margin-top:16px;">
+        <button id="btn-native-install" class="btn-green" style="width:100%;padding:14px;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px;">
+          <span>📲 Instalar Finanzas Fáciles</span>
+        </button>
+        <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:6px;">Se añadirá automáticamente a tus aplicaciones</p>
+      </div>
+
+      <div id="ios-guide-box" style="margin-top:14px;background:var(--bg);padding:14px;border-radius:18px;border:1px solid var(--border);">
+        <h4 style="font-size:14px;font-weight:700;color:var(--green);margin-bottom:6px;">🍏 iPhone / iPad (Safari)</h4>
+        <ol style="padding-left:18px;font-size:13px;line-height:1.6;color:var(--text);">
+          <li>Asegúrate de estar en <b>Safari</b>.</li>
+          <li>Toca el botón <b>Compartir</b> (el cuadrado con la flecha arriba: 📤).</li>
+          <li>Baja y selecciona <b>"Agregar a inicio"</b> (o <i>Add to Home Screen</i>) 📱.</li>
+          <li>Pulsa <b>Añadir</b> arriba a la derecha.</li>
+        </ol>
+      </div>
+
+      <div id="android-guide-box" style="margin-top:12px;background:var(--bg);padding:14px;border-radius:18px;border:1px solid var(--border);">
+        <h4 style="font-size:14px;font-weight:700;color:var(--green);margin-bottom:6px;">🤖 Android (Chrome)</h4>
+        <ol style="padding-left:18px;font-size:13px;line-height:1.6;color:var(--text);">
+          <li>Toca los <b>tres puntos (⋮)</b> arriba a la derecha en Chrome.</li>
+          <li>Selecciona <b>"Instalar aplicación"</b> o <b>"Agregar a pantalla principal"</b>.</li>
+        </ol>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;margin-top:20px;">
+        <button class="btn-primary" onclick="closeInstallGuide()">¡Entendido!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 6: Guía cuando el usuario necesita crear su copia -->
+  <div id="modal-needs-copy" class="modal-backdrop">
+    <div class="modal-sheet" style="text-align:center;max-width:480px;">
+      <div style="font-size:46px;margin-bottom:12px;">📄</div>
+      <h3 style="font-size:20px;font-weight:800;margin-bottom:8px;">Crea tu Copia Personal</h3>
+      <p style="font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:18px;">
+        Para proteger tu privacidad y permitirte guardar compras, tus datos se guardan en tu propia hoja de cálculo en tu Google Drive.
+      </p>
+      <a id="btn-create-copy-link" href="https://docs.google.com/spreadsheets/d/15zeBqmLwJ-U5NLtzKg7d76jBiRWAgt6p3-7h5l1K1XQ/copy" target="_blank" class="btn-green" style="display:block;text-decoration:none;padding:14px;font-size:14px;border-radius:14px;margin-bottom:12px;font-weight:800;">
+        🚀 Crear mi Copia en Google Drive
+      </a>
+      <p style="font-size:12px;color:var(--muted);line-height:1.4;">
+        Una vez creada la copia en tu Drive, abre esa hoja y pulsa el botón verde <b>"🚀 ABRIR MI APLICACIÓN WEB AQUÍ"</b> para comenzar a registrar tus gastos con permisos plenos.
+      </p>
+    </div>
+  </div>
+
+  <script id="initial-data" type="application/json"><?!= initialPayload ?></script>
+
+  <script>
+    let currentSheet = '';
+    let targetSpreadsheetId = '';
+    let allSheets = [];
+    let transactions = [];
+    let metas = [];
+    let historyData = [];
+    let emailsData = [];
+    let emailsLoadedOnce = false;
+    let selectedCategoryChip = 'ALL';
+    let emailFilterType = 'ALL';
+    let onboardingStep = 1;
+    let deferredPrompt = null; // Para captura del evento de instalación en Android
+
+    // DETECCIÓN PWA STANDALONE
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    if (isStandalone) {
+      document.addEventListener('DOMContentLoaded', () => {
+        const installBtn = document.getElementById('btn-install-header');
+        if (installBtn) {
+          installBtn.innerHTML = '<span class="ico">✓</span><span>App Instalada</span>';
+          installBtn.classList.remove('highlight');
+        }
+      });
+    }
+
+    // CAPTURA DEL EVENTO DE INSTALACIÓN EN ANDROID / CHROME
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const box = document.getElementById('android-native-install-box');
+      if (box) box.style.display = 'block';
+
+      const btn = document.getElementById('btn-native-install');
+      if (btn) {
+        btn.onclick = async () => {
+          if (!deferredPrompt) return;
+          deferredPrompt.prompt();
+          const { outcome } = await deferredPrompt.userChoice;
+          if (outcome === 'accepted') {
+            closeInstallGuide();
+          }
+          deferredPrompt = null;
+        };
+      }
+    });
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function formatCOP(val) {
+      return '$' + Math.round(Number(val) || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
+
+    function getCategoryEmoji(cat, tipo) {
+      if (String(tipo).toLowerCase() === 'ingreso') return '💰';
+      const c = String(cat || '').toLowerCase();
+      if (c.indexOf('deuda') !== -1) return '💳';
+      if (c.indexOf('fijo') !== -1) return '🏠';
+      if (c.indexOf('servicio') !== -1) return '⚡';
+      if (c.indexOf('ahorro') !== -1) return '🎯';
+      return '🛍️';
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('dark');
+      try { localStorage.setItem('ff_theme', document.body.classList.contains('dark') ? 'dark' : 'light'); } catch (e) {}
+    }
+
+    (function restoreTheme() {
+      try { if (localStorage.getItem('ff_theme') === 'dark') document.body.classList.add('dark'); } catch (e) {}
+    })();
+
+    function showError(msg) {
+      const el = document.getElementById('error-banner');
+      if (!msg) { el.style.display = 'none'; el.textContent = ''; }
+      else { el.style.display = 'block'; el.textContent = '⚠️ ' + msg; }
+    }
+
+    function setSyncStatus(text, isWait) {
+      const dot = document.getElementById('sync-dot');
+      const txt = document.getElementById('sync-text');
+      if (isWait) dot.classList.add('syncing');
+      else dot.classList.remove('syncing');
+      txt.textContent = text;
+    }
+
+    function switchView(viewId, btnEl) {
+      document.querySelectorAll('.view-pane').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.dock-tab').forEach(el => el.classList.remove('active'));
+      document.getElementById('view-' + viewId).classList.add('active');
+      if (btnEl) btnEl.classList.add('active');
+      if (viewId === 'history') renderHistoryView();
+      if (viewId === 'emails' && !emailsLoadedOnce) fetchEmails();
+    }
+
+    function applyDataState(data) {
+      if (!data) return;
+      if (data.error) {
+        const errStr = String(data.error);
+        if (errStr.includes('NEEDS_COPY') || errStr.toLowerCase().includes('permiso') || errStr.toLowerCase().includes('permission')) {
+          if (data.copyUrl) {
+            document.getElementById('btn-create-copy-link').href = data.copyUrl;
+          }
+          document.getElementById('modal-needs-copy').classList.add('active');
+          setSyncStatus('Copia requerida', true);
+          return;
+        }
+        showError('Error desde Google Sheets: ' + data.error);
+        setSyncStatus('Error', true);
+        return;
+      }
+      showError('');
+      document.getElementById('modal-needs-copy').classList.remove('active');
+      
+      if (data.spreadsheetId) {
+        targetSpreadsheetId = data.spreadsheetId;
+        try { localStorage.setItem('ff_target_sheet_id', targetSpreadsheetId); } catch (e) {}
+      }
+
+      allSheets = data.sheets || [];
+      currentSheet = data.sheetName || '';
+      transactions = data.transactions || [];
+      metas = data.metas || [];
+      historyData = data.history || [];
+
+      const syncedEmail = data.userEmail || 'Cuenta de Google activa';
+      document.getElementById('synced-email-label').textContent = syncedEmail;
+      document.getElementById('title-cell-badge').textContent = (data.titleCell || currentSheet).toUpperCase();
+      document.getElementById('modal-sheet-name').textContent = currentSheet;
+
+      const selector = document.getElementById('sheet-selector');
+      selector.innerHTML = allSheets.map(s => '<option value="' + escapeHtml(s) + '" ' + (s === currentSheet ? 'selected' : '') + '>' + escapeHtml(s) + '</option>').join('');
+
+      renderCategoryChips();
+      populateCompareSelects();
+      renderUI();
+    }
+
+    function openInstallGuide() {
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      const isAndroid = /Android/.test(navigator.userAgent);
+      const iosBox = document.getElementById('ios-guide-box');
+      const androidBox = document.getElementById('android-guide-box');
+      
+      if (isIOS) {
+        if (iosBox) iosBox.style.display = 'block';
+        if (androidBox) androidBox.style.display = 'none';
+      } else if (isAndroid) {
+        if (iosBox) iosBox.style.display = 'none';
+        if (androidBox) androidBox.style.display = 'block';
+      } else {
+        if (iosBox) iosBox.style.display = 'block';
+        if (androidBox) androidBox.style.display = 'block';
+      }
+      
+      document.getElementById('modal-install').classList.add('active');
+    }
+    function closeInstallGuide() { document.getElementById('modal-install').classList.remove('active'); }
+
+    function openOnboardingModal() {
+      onboardingStep = 1;
+      updateOnboardingView();
+      document.getElementById('modal-onboarding').classList.add('active');
+    }
+
+    function closeOnboardingModal() {
+      document.getElementById('modal-onboarding').classList.remove('active');
+      try { localStorage.setItem('ff_onboarding_seen_v2', '1'); } catch (e) {}
+    }
+
+    function updateOnboardingView() {
+      const steps = document.querySelectorAll('.onboarding-step');
+      steps.forEach(step => {
+        const stepNum = parseInt(step.getAttribute('data-step'), 10);
+        step.style.display = stepNum === onboardingStep ? 'block' : 'none';
+      });
+
+      document.getElementById('onboarding-counter').textContent = 'Paso ' + onboardingStep + ' de 4';
+      document.getElementById('onboarding-prev').style.visibility = onboardingStep === 1 ? 'hidden' : 'visible';
+      document.getElementById('onboarding-next').textContent = onboardingStep === 4 ? '¡Empezar ahora! 🚀' : 'Siguiente ➔';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      try {
+        if (!localStorage.getItem('ff_onboarding_seen_v2')) {
+          document.getElementById('modal-onboarding').classList.add('active');
+        }
+      } catch (e) {}
+
+      const nextBtn = document.getElementById('onboarding-next');
+      const prevBtn = document.getElementById('onboarding-prev');
+
+      if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+          onboardingStep++;
+          if (onboardingStep > 4) closeOnboardingModal();
+          else updateOnboardingView();
+        });
+      }
+
+      if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+          onboardingStep = Math.max(1, onboardingStep - 1);
+          updateOnboardingView();
+        });
+      }
+    });
+
+    function confirmSetupFromScratch() {
+      const sueldo = Number(document.getElementById('setup-sueldo').value) || 0;
+      const meta1 = document.getElementById('setup-meta-1').value.trim();
+      const meta2 = document.getElementById('setup-meta-2').value.trim();
+      const meta3 = document.getElementById('setup-meta-3').value.trim();
+
+      setSyncStatus('Guardando...', true);
+
+      google.script.run
+        .withSuccessHandler(data => {
+          applyDataState(data);
+          closeSetupModal();
+          setSyncStatus('Finanzas Fáciles ✓', false);
+        })
+        .withFailureHandler(err => {
+          showError('Error al guardar: ' + (err.message || err));
+        })
+        .setupFirstMonthForClient({
+          sheetName: currentSheet,
+          sueldo: sueldo,
+          meta1: meta1,
+          meta2: meta2,
+          meta3: meta3
+        }, targetSpreadsheetId);
+    }
+
+    function fetchEmails() {
+      const days = document.getElementById('email-days').value;
+      const mode = document.getElementById('email-mode').value;
+      const statusEl = document.getElementById('emails-status');
+      statusEl.textContent = '⏳ Analizando notificaciones bancarias de los últimos ' + days + ' días...';
+      setSyncStatus('Leyendo Correos...', true);
+
+      google.script.run
+        .withSuccessHandler(list => {
+          emailsLoadedOnce = true;
+          emailsData = list || [];
+          setSyncStatus('Finanzas Fáciles ✓', false);
+          renderEmailsList();
+        })
+        .withFailureHandler(err => {
+          setSyncStatus('Error Escáner', true);
+          statusEl.textContent = '⚠️ Error al buscar correos: ' + (err.message || err);
+        })
+        .getFinancialEmails(days, mode);
+    }
+
+    function filterEmailsBy(filterKey, btnEl) {
+      emailFilterType = filterKey;
+      document.querySelectorAll('#email-source-chips .chip').forEach(c => c.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+      renderEmailsList();
+    }
+
+    function renderEmailsList() {
+      const statusEl = document.getElementById('emails-status');
+      const container = document.getElementById('emails-list');
+
+      const filtered = emailsData.filter(m => {
+        const med = (m.medio + ' ' + m.entidad).toUpperCase();
+        if (emailFilterType === 'PSE') return med.includes('PSE') || med.includes('PASARELA') || med.includes('JELPIT') || med.includes('AVALPAY') || med.includes('EPAYCO');
+        if (emailFilterType === 'CARD') return med.includes('DÉBITO') || med.includes('DEBITO') || med.includes('CRÉDITO') || med.includes('CREDITO') || med.includes('TARJETA') || med.includes('RAPPICARD') || med.includes('T.DEB') || med.includes('T.CRED');
+        if (emailFilterType === 'BANCOLOMBIA') return !med.includes('PSE') && !med.includes('PASARELA');
+        if (emailFilterType === 'OTHER') return med.includes('SERVICIOS') || med.includes('FACTURA');
+        return true;
+      });
+
+      if (!filtered.length) {
+        statusEl.textContent = 'No se encontraron notificaciones bancarias con este filtro en el rango seleccionado.';
+        container.innerHTML = '';
+        return;
+      }
+
+      statusEl.textContent = 'Detectamos ' + filtered.length + ' movimientos claros en tu correo. Verifica y pulsa "＋ Agregar a Hoja":';
+
+      container.innerHTML = filtered.map(m => {
+        const idx = emailsData.indexOf(m);
+        const isIng = m.tipo === 'Ingreso';
+        const emoji = getCategoryEmoji(m.categoria, m.tipo);
+        const tituloClaro = escapeHtml(m.accionTitulo || ('Movimiento en ' + m.comercio));
+        const subExplicacion = escapeHtml(m.explicacionCorta || ('Categoría sugerida: ' + m.categoria));
+
+        return `
+          <div class="mail-card ${m.imported ? 'imported' : ''}" id="mail-card-${idx}">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+              <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                <span class="pill-badge">🏦 ${escapeHtml(m.entidad)}</span>
+                <span class="pill-badge">📅 ${escapeHtml(m.fecha)}</span>
+                <span class="pill-badge">💳 ${escapeHtml(m.medio)}</span>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:${m.imported ? 'var(--green)' : 'var(--amber)'};">
+                ${m.imported ? '✓ Ya agregado al Excel' : '● Listo para agregar'}
+              </span>
+            </div>
+
+            <div class="mail-summary-box">
+              <div>
+                <div class="mail-summary-title">${emoji} ${tituloClaro}</div>
+                <div class="mail-summary-sub">${subExplicacion}</div>
+              </div>
+              <div class="mail-summary-amount" style="color:${isIng ? 'var(--green)' : 'var(--text)'};">
+                ${isIng ? '+' : '-'}${formatCOP(m.monto)}
+              </div>
+            </div>
+
+            <div class="mail-grid">
+              <div>
+                <label style="font-size:11px;color:var(--muted);">Tipo</label>
+                <select id="m-tipo-${idx}" class="mail-input">
+                  <option value="Egreso" ${!isIng ? 'selected' : ''}>💸 Egreso (Gasto/Pago)</option>
+                  <option value="Ingreso" ${isIng ? 'selected' : ''}>💰 Ingreso (Abono)</option>
+                </select>
+              </div>
+
+              <div>
+                <label style="font-size:11px;color:var(--muted);">Categoría sugerida</label>
+                <select id="m-cat-${idx}" class="mail-input">
+                  <option value="Gastos opcionales" ${m.categoria === 'Gastos opcionales' ? 'selected' : ''}>🛍️ Gastos opcionales</option>
+                  <option value="Gastos fijos" ${m.categoria === 'Gastos fijos' ? 'selected' : ''}>🏠 Gastos fijos</option>
+                  <option value="Servicios" ${m.categoria === 'Servicios' ? 'selected' : ''}>⚡ Servicios</option>
+                  <option value="Deudas" ${m.categoria === 'Deudas' ? 'selected' : ''}>💳 Deudas</option>
+                  <option value="Ahorro" ${m.categoria === 'Ahorro' ? 'selected' : ''}>🎯 Ahorro</option>
+                  <option value="Ingreso Adicional" ${m.categoria === 'Ingreso Adicional' ? 'selected' : ''}>💰 Ingreso Adicional</option>
+                </select>
+              </div>
+
+              <div style="grid-column: span 2;">
+                <label style="font-size:11px;color:var(--muted);">Descripción que quedará en tu Excel</label>
+                <input id="m-desc-${idx}" type="text" class="mail-input" value="${escapeHtml(m.descripcionSugerida)}">
+              </div>
+
+              <div>
+                <label style="font-size:11px;color:var(--muted);">Monto (COP)</label>
+                <input id="m-monto-${idx}" type="number" class="mail-input" value="${Number(m.monto) || 0}">
+              </div>
+
+              <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:8px;">
+                <label style="font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer;margin-bottom:8px;">
+                  <input id="m-pagado-${idx}" type="checkbox" checked style="width:16px;height:16px;accent-color:var(--green);">
+                  Ya pagado
+                </label>
+                <button id="m-btn-${idx}" class="btn-green" onclick="importEmailItem(${idx})">
+                  ${m.imported ? 'Volver a agregar' : '＋ Agregar a Hoja'}
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function importEmailItem(idx) {
+      const m = emailsData[idx];
+      if (!m) return;
+
+      const tipo = document.getElementById('m-tipo-' + idx).value;
+      const categoria = document.getElementById('m-cat-' + idx).value;
+      const desc = document.getElementById('m-desc-' + idx).value.trim();
+      const monto = Number(document.getElementById('m-monto-' + idx).value);
+      const pagado = document.getElementById('m-pagado-' + idx).checked;
+
+      const btn = document.getElementById('m-btn-' + idx);
+      btn.disabled = true;
+      btn.textContent = 'Guardando...';
+      setSyncStatus('Insertando en Excel...', true);
+
+      google.script.run
+        .withSuccessHandler(data => {
+          m.imported = true;
+          applyDataState(data);
+          renderEmailsList();
+          setSyncStatus('Agregado al Excel ✓', false);
+        })
+        .withFailureHandler(err => {
+          btn.disabled = false;
+          btn.textContent = '＋ Agregar a Hoja';
+          showError('Error al importar: ' + (err.message || err));
+        })
+        .importBancolombiaEmailToSheet(currentSheet, m.id, { tipo, categoria, desc, monto, pagado }, targetSpreadsheetId);
+    }
+
+    function renderCategoryChips() {
+      const cats = [];
+      transactions.forEach(t => {
+        if (t.tipo.toLowerCase() !== 'ingreso' && cats.indexOf(t.categoria) === -1) cats.push(t.categoria);
+      });
+
+      const items = [{ id: 'ALL', label: '✨ Todos' }]
+        .concat(cats.map(c => ({ id: c, label: getCategoryEmoji(c, 'Egreso') + ' ' + c })))
+        .concat([{ id: 'ONLY_INGRESOS', label: '💰 Ingresos' }]);
+
+      document.getElementById('category-chips').innerHTML = items.map(item => {
+        const activeClass = selectedCategoryChip === item.id ? 'chip active' : 'chip';
+        return '<button class="' + activeClass + '" onclick="selectChip(\'' + item.id.replace(/'/g, "\\'") + '\')">' + escapeHtml(item.label) + '</button>';
+      }).join('');
+    }
+
+    function selectChip(catId) {
+      selectedCategoryChip = catId;
+      renderCategoryChips();
+      renderUI();
+    }
+
+    function populateCompareSelects() {
+      const sel1 = document.getElementById('compare-month-1');
+      const sel2 = document.getElementById('compare-month-2');
+      if (!historyData.length) return;
+
+      const optionsHtml = historyData.map(h => '<option value="' + escapeHtml(h.sheetName) + '">' + escapeHtml(h.title) + '</option>').join('');
+      const prev1 = sel1.value;
+      const prev2 = sel2.value;
+
+      sel1.innerHTML = optionsHtml;
+      sel2.innerHTML = optionsHtml;
+
+      if (historyData.length >= 2) {
+        sel1.value = prev1 || historyData[1].sheetName;
+        sel2.value = prev2 || historyData[0].sheetName;
+      } else {
+        sel1.value = historyData[0].sheetName;
+        sel2.value = historyData[0].sheetName;
+      }
+    }
+
+    function renderHistoryView() {
+      const name1 = document.getElementById('compare-month-1').value;
+      const name2 = document.getElementById('compare-month-2').value;
+
+      const m1 = historyData.find(h => h.sheetName === name1) || { ingresos: 0, egresos: 0, libre: 0, title: name1 };
+      const m2 = historyData.find(h => h.sheetName === name2) || { ingresos: 0, egresos: 0, libre: 0, title: name2 };
+
+      const diffIng = m2.ingresos - m1.ingresos;
+      const diffEgr = m2.egresos - m1.egresos;
+      const diffLib = m2.libre - m1.libre;
+
+      const badgeDiff = (val, invertColor) => {
+        if (val === 0) return '<span style="color:var(--muted);">Sin variación</span>';
+        const isGood = invertColor ? val < 0 : val > 0;
+        const color = isGood ? 'var(--green)' : 'var(--red)';
+        return '<span style="color:' + color + ';font-weight:700;">' + (val > 0 ? '+' : '') + formatCOP(val) + '</span>';
+      };
+
+      document.getElementById('compare-result-cards').innerHTML = `
+        <div class="mini-stat">
+          <div class="mini-label">💰 Ingresos</div>
+          <div class="mini-val">${formatCOP(m2.ingresos)}</div>
+          <div class="mini-foot">Base: ${formatCOP(m1.ingresos)} · ${badgeDiff(diffIng, false)}</div>
+        </div>
+        <div class="mini-stat">
+          <div class="mini-label">💸 Egresos</div>
+          <div class="mini-val">${formatCOP(m2.egresos)}</div>
+          <div class="mini-foot">Base: ${formatCOP(m1.egresos)} · ${badgeDiff(diffEgr, true)}</div>
+        </div>
+        <div class="mini-stat">
+          <div class="mini-label">✨ Dinero Libre</div>
+          <div class="mini-val">${formatCOP(m2.libre)}</div>
+          <div class="mini-foot">Base: ${formatCOP(m1.libre)} · ${badgeDiff(diffLib, false)}</div>
+        </div>
+      `;
+
+      const maxVal = Math.max.apply(null, historyData.map(h => Math.max(h.ingresos, h.egresos, 1)));
+      document.getElementById('history-bars-chart').innerHTML = historyData.slice(0, 12).map(h => {
+        const hIng = Math.max(6, Math.round((h.ingresos / maxVal) * 130));
+        const hEgr = Math.max(6, Math.round((h.egresos / maxVal) * 130));
+        return `
+          <div class="hbar-col" title="${escapeHtml(h.title)}">
+            <div class="hbar-pair">
+              <div class="hbar" style="height:${hIng}px;background:var(--green);"></div>
+              <div class="hbar" style="height:${hEgr}px;background:var(--red);"></div>
+            </div>
+            <div class="hbar-lbl">${escapeHtml(h.sheetName)}</div>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('history-list').innerHTML = historyData.map(h => {
+        const pct = h.ingresos > 0 ? ((h.libre / h.ingresos) * 100).toFixed(1) + '% libre' : '0%';
+        return `
+          <div class="tx-item">
+            <div class="tx-left">
+              <div class="tx-emoji">📆</div>
+              <div class="tx-info">
+                <div class="tx-title">${escapeHtml(h.title)}</div>
+                <div class="tx-cat">Ingresos: ${formatCOP(h.ingresos)} · Egresos: ${formatCOP(h.egresos)}</div>
+              </div>
+            </div>
+            <div class="tx-right">
+              <div>
+                <div class="tx-amount" style="color:${h.libre >= 0 ? 'var(--green)' : 'var(--red)'};">${formatCOP(h.libre)}</div>
+                <div style="font-size:11px;color:var(--muted);">${pct}</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function loadFromSheets(sheetName) {
+      setSyncStatus('Sincronizando...', true);
+      const targetId = targetSpreadsheetId || (function() {
+        try { return localStorage.getItem('ff_target_sheet_id') || ''; } catch (e) { return ''; }
+      })();
+
+      google.script.run
+        .withSuccessHandler(data => {
+          applyDataState(data);
+          setSyncStatus('Finanzas Fáciles ✓', false);
+        })
+        .withFailureHandler(err => {
+          setSyncStatus('Error', true);
+          showError(err.message || String(err));
+        })
+        .getDashboardPayload(sheetName || '', false, targetId);
+    }
+
+    function onChangeSheet() {
+      const selected = document.getElementById('sheet-selector').value;
+      if (selected) loadFromSheets(selected);
+    }
+
+    function togglePaid(rowNumber, checkboxEl) {
+      const newStatus = checkboxEl.checked;
+      transactions.forEach(t => { if (t.row === rowNumber) t.pagado = newStatus; });
+      renderUI();
+
+      setSyncStatus('Guardando...', true);
+      google.script.run
+        .withSuccessHandler(() => setSyncStatus('Finanzas Fáciles ✓', false))
+        .withFailureHandler(err => {
+          showError('No se pudo actualizar: ' + (err.message || err));
+          setSyncStatus('Error', true);
+        })
+        .updatePaidStatus(currentSheet, rowNumber, newStatus, targetSpreadsheetId);
+    }
+
+    function editRow(rowNumber) {
+      const item = transactions.find(t => t.row === rowNumber);
+      if (!item) return;
+      const newDesc = prompt('Editar concepto:', item.desc);
+      if (newDesc === null) return;
+      const newAmount = prompt('Nuevo monto para "' + newDesc + '" (COP):', item.monto);
+      if (newAmount === null || isNaN(newAmount) || newAmount.trim() === '') return;
+
+      setSyncStatus('Actualizando...', true);
+      google.script.run
+        .withSuccessHandler(data => { applyDataState(data); setSyncStatus('Actualizado ✓', false); })
+        .withFailureHandler(err => showError(err.message || err))
+        .updateRowData(currentSheet, rowNumber, newDesc, Number(newAmount), targetSpreadsheetId);
+    }
+
+    function deleteRow(rowNumber) {
+      const item = transactions.find(t => t.row === rowNumber);
+      if (!item) return;
+      if (!confirm('¿Eliminar "' + item.desc + '"?')) return;
+
+      setSyncStatus('Eliminando...', true);
+      google.script.run
+        .withSuccessHandler(data => { applyDataState(data); setSyncStatus('Eliminado ✓', false); })
+        .withFailureHandler(err => showError(err.message || err))
+        .clearTransactionRow(currentSheet, rowNumber, targetSpreadsheetId);
+    }
+
+    function editMeta(rowNumber, nombre, actual) {
+      const nuevoNombre = prompt('Nombre del fondo o meta:', nombre);
+      if (nuevoNombre === null) return;
+      const nuevoMonto = prompt('Saldo acumulado de "' + nuevoNombre + '" (COP):', actual);
+      if (nuevoMonto === null || isNaN(nuevoMonto) || nuevoMonto.trim() === '') return;
+
+      setSyncStatus('Guardando meta...', true);
+      google.script.run
+        .withSuccessHandler(data => { applyDataState(data); setSyncStatus('Meta guardada ✓', false); })
+        .withFailureHandler(err => showError(err.message || err))
+        .updateMetaRow(currentSheet, rowNumber, nuevoNombre, Number(nuevoMonto), targetSpreadsheetId);
+    }
+
+    function openModal() { document.getElementById('modal').classList.add('active'); }
+    function closeModal() { document.getElementById('modal').classList.remove('active'); }
+    function openNewMonthModal() {
+      document.getElementById('dup-source-name').textContent = currentSheet;
+      document.getElementById('modal-month').classList.add('active');
+    }
+    function closeNewMonthModal() { document.getElementById('modal-month').classList.remove('active'); }
+
+    function addTransaction() {
+      const tipo = document.getElementById('new-tipo').value;
+      const categoria = document.getElementById('new-cat').value.trim() || 'Gastos opcionales';
+      const desc = document.getElementById('new-desc').value.trim();
+      const monto = Number(document.getElementById('new-monto').value);
+
+      if (!desc || isNaN(monto)) return alert('Completa la descripción y el monto.');
+
+      const btn = document.getElementById('btn-save-new');
+      btn.disabled = true; btn.textContent = 'Guardando...';
+      setSyncStatus('Agregando...', true);
+
+      google.script.run
+        .withSuccessHandler(data => {
+          applyDataState(data);
+          document.getElementById('new-desc').value = '';
+          document.getElementById('new-monto').value = '';
+          btn.disabled = false; btn.textContent = 'Guardar Movimiento';
+          closeModal();
+          setSyncStatus('Finanzas Fáciles ✓', false);
+        })
+        .withFailureHandler(err => {
+          btn.disabled = false; btn.textContent = 'Guardar Movimiento';
+          showError(err.message || err);
+        })
+        .addNewTransaction(currentSheet, { tipo, categoria, desc, monto, pagado: false }, targetSpreadsheetId);
+    }
+
+    function confirmDuplicateMonth() {
+      const newSheetName = document.getElementById('dup-sheet-name').value.trim();
+      const newTitleCell = document.getElementById('dup-title-cell').value.trim();
+      if (!newSheetName) return alert('Escribe el nombre para la nueva pestaña.');
+
+      const btn = document.getElementById('btn-dup-month');
+      btn.disabled = true; btn.textContent = 'Creando...';
+      setSyncStatus('Creando mes...', true);
+
+      google.script.run
+        .withSuccessHandler(data => {
+          applyDataState(data);
+          document.getElementById('dup-sheet-name').value = '';
+          document.getElementById('dup-title-cell').value = '';
+          btn.disabled = false; btn.textContent = 'Crear Mes';
+          closeNewMonthModal();
+          setSyncStatus('Mes creado ✓', false);
+        })
+        .withFailureHandler(err => {
+          btn.disabled = false; btn.textContent = 'Crear Mes';
+          showError(err.message || err);
+        })
+        .duplicateMonthSheet(currentSheet, newSheetName, newTitleCell, targetSpreadsheetId);
+    }
+
+    function renderUI() {
+      const ingresosList = transactions.filter(t => t.tipo.toLowerCase() === 'ingreso');
+      const ingresos = ingresosList.reduce((acc, t) => acc + t.monto, 0);
+      const ingresosRecibidos = ingresosList.filter(t => t.pagado).reduce((acc, t) => acc + t.monto, 0);
+
+      const egresosList = transactions.filter(t => t.tipo.toLowerCase() !== 'ingreso');
+      const egresos = egresosList.reduce((acc, t) => acc + t.monto, 0);
+      const pagado = egresosList.filter(t => t.pagado).reduce((acc, t) => acc + t.monto, 0);
+      const pendiente = egresos - pagado;
+      const libre = ingresos - egresos;
+
+      document.getElementById('kpi-ingresos').textContent = formatCOP(ingresos);
+      document.getElementById('kpi-ingresos-recibidos').textContent = 'Recibido: ' + formatCOP(ingresosRecibidos);
+      document.getElementById('kpi-egresos').textContent = formatCOP(egresos);
+      document.getElementById('kpi-libre').textContent = formatCOP(libre);
+      document.getElementById('kpi-libre').style.color = libre >= 0 ? 'var(--text)' : 'var(--red)';
+      document.getElementById('kpi-libre-pct').textContent = ingresos > 0
+        ? ((libre / ingresos) * 100).toFixed(1) + '% libre después de todos tus compromisos'
+        : 'Toca el botón "⚙️ Sueldo y Metas" arriba para configurar tu sueldo inicial';
+
+      const pctPagado = egresos > 0 ? Math.min(100, Math.round((pagado / egresos) * 100)) : 0;
+      document.getElementById('bar-pagado').style.width = pctPagado + '%';
+      document.getElementById('txt-pagado').textContent = formatCOP(pagado) + ' pagados (' + pctPagado + '%)';
+      document.getElementById('txt-pendiente').textContent = 'Falta por pagar: ' + formatCOP(pendiente);
+
+      const totalMetas = metas.reduce((acc, m) => acc + m.acumulado, 0);
+      document.getElementById('kpi-metas-total').textContent = formatCOP(totalMetas);
+      document.getElementById('metas-list').innerHTML = metas.map(m => `
+        <div class="meta-pill-row" onclick="editMeta(${m.row}, '${m.nombre.replace(/'/g, "\\'")}', ${m.acumulado})">
+          <span style="font-size:13px;font-weight:600;">🏦 ${escapeHtml(m.nombre)}</span>
+          <strong style="font-size:14px;">${formatCOP(m.acumulado)} ✎</strong>
+        </div>
+      `).join('');
+
+      const catMap = {};
+      egresosList.forEach(t => {
+        const key = t.categoria || 'Otros';
+        catMap[key] = (catMap[key] || 0) + t.monto;
+      });
+      const cats = Object.keys(catMap);
+      const palette = ['#E5484D', '#3B82F6', '#F59E0B', '#18A957', '#8B5CF6', '#06B6D4'];
+
+      document.getElementById('category-breakdown').innerHTML = cats.map((c, i) => {
+        const val = catMap[c];
+        const pct = egresos > 0 ? ((val / egresos) * 100).toFixed(1) : 0;
+        const color = palette[i % palette.length];
+        return `
+          <div class="cat-item">
+            <div class="cat-top">
+              <span>${getCategoryEmoji(c, 'Egreso')} ${escapeHtml(c)}</span>
+              <span>${formatCOP(val)} <small style="color:var(--muted);">(${pct}%)</small></span>
+            </div>
+            <div class="cat-track">
+              <div style="width:${pct}%;height:100%;background:${color};border-radius:99px;"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const filterStatus = document.getElementById('filter-status').value;
+      const searchQ = document.getElementById('search-input').value.trim().toLowerCase();
+
+      const filtered = transactions.filter(t => {
+        if (selectedCategoryChip === 'ONLY_INGRESOS' && t.tipo.toLowerCase() !== 'ingreso') return false;
+        if (selectedCategoryChip !== 'ALL' && selectedCategoryChip !== 'ONLY_INGRESOS' && t.categoria !== selectedCategoryChip) return false;
+        if (filterStatus === 'PENDING' && t.pagado) return false;
+        if (filterStatus === 'PAID' && !t.pagado) return false;
+        if (searchQ && t.desc.toLowerCase().indexOf(searchQ) === -1 && t.categoria.toLowerCase().indexOf(searchQ) === -1) return false;
+        return true;
+      });
+
+      filtered.sort((a, b) => Number(a.pagado) - Number(b.pagado));
+
+      document.getElementById('tx-count-label').textContent = filtered.length + ' movimientos';
+
+      document.getElementById('transactions-list').innerHTML = filtered.map(t => {
+        const isIngreso = t.tipo.toLowerCase() === 'ingreso';
+        const emoji = getCategoryEmoji(t.categoria, t.tipo);
+        return `
+          <div class="tx-item ${t.pagado ? 'is-paid' : ''}">
+            <div class="tx-left">
+              <input type="checkbox" class="ios-check" ${t.pagado ? 'checked' : ''} onchange="togglePaid(${t.row}, this)">
+              <div class="tx-emoji">${emoji}</div>
+              <div class="tx-info">
+                <div class="tx-title">${escapeHtml(t.desc)}</div>
+                <div class="tx-cat">${escapeHtml(t.categoria)} · Fila ${t.row}</div>
+              </div>
+            </div>
+            <div class="tx-right">
+              <div class="tx-amount" style="color:${isIngreso ? 'var(--green)' : 'var(--text)'};">
+                ${isIngreso ? '+' : ''}${formatCOP(t.monto)}
+              </div>
+              <div class="tx-actions">
+                <button class="mini-action" onclick="editRow(${t.row})" title="Editar">✎ Editar</button>
+                <button class="mini-action" onclick="deleteRow(${t.row})" title="Eliminar">✕</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    (function initApp() {
+      try {
+        const rawJson = document.getElementById('initial-data').textContent.trim();
+        if (rawJson && rawJson.indexOf('initialPayload') === -1) {
+          applyDataState(JSON.parse(rawJson));
+          return;
+        }
+      } catch (e) {}
+      loadFromSheets('');
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eliminación de Cuenta y Datos | Finanzas Contame Pues</title>
+  <style>
+    :root {
+      --bg: #121822;
+      --card: #1B2432;
+      --border: #1F2937;
+      --text: #F9FAFB;
+      --muted: #9CA3AF;
+      --green: #F6AC13;
+      --red: #EF4444;
+      --red-soft: rgba(239, 68, 68, 0.12);
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.65;
+      padding: 24px 16px;
+    }
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px 28px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+    .header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 20px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .badge {
+      display: inline-block;
+      background: var(--red-soft);
+      color: var(--red);
+      font-weight: 700;
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-top: 6px;
+    }
+    h1 { font-size: 24px; font-weight: 900; color: #FFF; }
+    h2 { font-size: 17px; font-weight: 800; color: var(--text); margin-top: 22px; margin-bottom: 8px; }
+    p, li { font-size: 14px; color: #D1D5DB; margin-bottom: 12px; }
+    ul { padding-left: 20px; margin-bottom: 16px; }
+    .alert-box {
+      background: rgba(239, 68, 68, 0.08);
+      border-left: 4px solid var(--red);
+      padding: 14px 16px;
+      border-radius: 8px;
+      margin: 18px 0;
+    }
+    .alert-box p { margin: 0; color: #FCA5A5; font-size: 13.5px; }
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-size: 13px; font-weight: 700; color: #E5E7EB; margin-bottom: 6px; }
+    input[type="email"], textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: #121822;
+      border: 1px solid var(--border);
+      color: #FFF;
+      font-size: 14px;
+      font-family: inherit;
+    }
+    input[type="email"]:focus, textarea:focus {
+      outline: none;
+      border-color: var(--green);
+    }
+    .btn-submit {
+      width: 100%;
+      background: var(--red);
+      color: #FFF;
+      font-weight: 800;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn-submit:hover { opacity: 0.9; }
+    .footer {
+      border-top: 1px solid var(--border);
+      margin-top: 30px;
+      padding-top: 18px;
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+    }
+    a { color: var(--green); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div style="font-size: 38px;">🗑️</div>
+      <div>
+        <h1>Solicitud de Eliminación de Cuenta y Datos</h1>
+        <p style="margin: 0; font-size: 13px; color: var(--muted);">Finanzas Contame Pues (Google Play Requirement)</p>
+        <span class="badge">Política de Supresión Permanente</span>
+      </div>
+    </div>
+
+    <p>
+      En cumplimiento de las políticas de datos de <strong>Google Play Store</strong> y la <strong>Ley 1581 de 2012 de Colombia</strong>, cualquier usuario tiene derecho a solicitar la eliminación total e irreversible de su cuenta y de toda la información asociada en nuestros sistemas.
+    </p>
+
+    <div class="alert-box">
+      <p><strong>⚠️ Advertencia:</strong> Al solicitar la eliminación de tu cuenta, se borrarán de forma definitiva tu usuario de autenticación en Firebase y todas tus bases de datos de meses, transacciones, presupuestos, suscripciones y deudas registradas en la nube. Esta acción no se puede deshacer.</p>
+    </div>
+
+    <h2>¿Qué datos se eliminan?</h2>
+    <ul>
+      <li><strong>Identidad y Perfil:</strong> Dirección de correo electrónico, nombre de usuario y credenciales en Google Firebase Authentication.</li>
+      <li><strong>Registros Financieros en la Nube:</strong> Todos tus meses creados, transacciones de gastos e ingresos, historial de compras escaneadas.</li>
+      <li><strong>Configuraciones y Metas:</strong> Sobres de presupuesto, metas de ahorro acumuladas y planes de aceleración de deudas en Cloud Firestore.</li>
+    </ul>
+
+    <h2>¿Cómo solicitar la eliminación?</h2>
+    <p><strong>Opción 1 (Directo desde la App):</strong> Si tienes la aplicación instalada, puedes ir a la pestaña <em>"Mi Cuenta"</em> › tocar tu perfil › presionar <em>"Cerrar Sesión / Eliminar Cuenta"</em>.</p>
+    <p><strong>Opción 2 (Formulario Web en Línea):</strong> Si ya no tienes la app instalada o no recuerdas tu contraseña, ingresa tu correo registrado a continuación para enviar tu solicitud de eliminación directa:</p>
+
+    <form id="deleteForm" onsubmit="handleSubmit(event)">
+      <div class="form-group">
+        <label for="email">Correo electrónico registrado en la cuenta:</label>
+        <input type="email" id="email" required placeholder="tu-correo@ejemplo.com">
+      </div>
+
+      <div class="form-group">
+        <label for="reason">Motivo (opcional):</label>
+        <textarea id="reason" rows="3" placeholder="Cuéntanos brevemente por qué deseas eliminar tus datos para ayudarnos a mejorar..."></textarea>
+      </div>
+
+      <button type="submit" class="btn-submit">🗑️ Solicitar Eliminación Definitiva de Datos</button>
+    </form>
+
+    <div id="successMsg" style="display: none; background: rgba(16, 185, 129, 0.1); border: 1px solid var(--green); padding: 18px; border-radius: 12px; margin-top: 20px; text-align: center;">
+      <p style="font-size: 24px; margin-bottom: 6px;">✅</p>
+      <p style="color: var(--green); font-weight: 800; font-size: 15px; margin-bottom: 6px;">Solicitud Generada Exitosamente</p>
+      <p style="font-size: 13px; color: #D1D5DB; margin-bottom: 0;">Se ha abierto tu cliente de correo para confirmar el envío a <strong style="color: #FFF;">soporte.finanzasfaciles@gmail.com</strong>. Tu cuenta y datos en Cloud Firestore serán borrados en un plazo máximo de 24 a 48 horas hábiles.</p>
+    </div>
+
+    <script>
+      function handleSubmit(e) {
+        e.preventDefault();
+        const email = document.getElementById('email').value.trim();
+        const reason = document.getElementById('reason').value.trim();
+        const subject = encodeURIComponent('SOLICITUD DE ELIMINACIÓN DE CUENTA - FINANZAS FÁCILES');
+        const body = encodeURIComponent(
+          `Hola Dylan / Equipo de Finanzas Contame Pues,\n\nSolicito formalmente la eliminación permanente e irreversible de mi cuenta y de todos mis datos financieros asociados al siguiente correo:\n\nCorreo: ${email}\nMotivo: ${reason || 'No especificado'}\n\nEntiendo que esta acción es definitiva.\n\nFecha: ${new Date().toLocaleDateString('es-CO')}`
+        );
+        window.location.href = `mailto:soporte.finanzasfaciles@gmail.com?subject=${subject}&body=${body}`;
+        document.getElementById('deleteForm').style.display = 'none';
+        document.getElementById('successMsg').style.display = 'block';
+      }
+    </script>
+
+    <div class="footer">
+      <p><a href="/privacy.html">Política de Privacidad</a> • <a href="/terms.html">Términos y Condiciones</a></p>
+      <p style="margin-top: 6px;">© 2026 Finanzas Contame Pues. Google Play Compliance.</p>
+    </div>
+  </div>
+</body>
+</html>

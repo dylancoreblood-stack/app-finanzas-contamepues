@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "Finanzas Contame Pues",
+    "slug": "finanzas-contamepues",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.contamepues.finanzas",
+      "buildNumber": "1"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#1B2432"
+      },
+      "package": "com.contamepues.finanzas",
+      "versionCode": 1
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single"
+    }
+  }
+}
