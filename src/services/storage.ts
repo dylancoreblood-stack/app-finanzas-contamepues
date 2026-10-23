@@ -171,9 +171,10 @@ export async function setActiveMonthId(monthId: string): Promise<void> {
 export async function getStoredTheme(): Promise<'dark' | 'light'> {
   try {
     const theme = await AsyncStorage.getItem(STORAGE_KEY_THEME);
+    if (theme === 'dark') return 'dark';
     if (theme === 'light') return 'light';
   } catch (e) {}
-  return 'dark'; // OLED dark por defecto
+  return 'light'; // Contame Pues diseño claro oficial por defecto
 }
 
 export async function setStoredTheme(theme: 'dark' | 'light'): Promise<void> {

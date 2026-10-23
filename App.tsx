@@ -13,6 +13,7 @@ import {
   KeyboardAvoidingView,
   ActivityIndicator,
   Linking,
+  Image,
   useWindowDimensions
 } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
@@ -179,7 +180,7 @@ export default function AppWrapper() {
 const webFrameStyles = StyleSheet.create({
   outerContainer: {
     flex: 1,
-    backgroundColor: '#04060A',
+    backgroundColor: '#F8F9FA',
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%'
@@ -189,17 +190,20 @@ const webFrameStyles = StyleSheet.create({
     width: '100%',
     maxWidth: 500,
     overflow: 'hidden',
+    backgroundColor: '#FFFFFF',
     ...(Platform.OS === 'web' ? {
-      boxShadow: '0 0 80px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08)',
+      boxShadow: '0 12px 40px rgba(27, 36, 50, 0.08), 0 0 0 1px rgba(27, 36, 50, 0.06)',
     } : {})
   },
   innerShellDesktop: {
     maxWidth: 1280,
+    backgroundColor: 'transparent',
     boxShadow: 'none',
     paddingHorizontal: 20
   },
   innerShellTablet: {
     maxWidth: 860,
+    backgroundColor: 'transparent',
     boxShadow: 'none',
     paddingHorizontal: 16
   }
@@ -449,7 +453,7 @@ function MainApp() {
   const isTablet = windowWidth >= 768 && windowWidth < 1024;
   const isMobile = windowWidth < 768;
 
-  const [themeMode, setThemeMode] = useState<'dark' | 'light'>('dark');
+  const [themeMode, setThemeMode] = useState<'dark' | 'light'>('light');
   const theme: ThemeType = themeMode === 'dark' ? darkTheme : lightTheme;
 
   const [months, setMonths] = useState<MesFinanciero[]>([DEFAULT_MONTH]);
@@ -2373,19 +2377,98 @@ function MainApp() {
       {/* TOPBAR MODERNA */}
       <View style={styles.topbar}>
         <View style={styles.topbarMainRow}>
-          {/* Logo, Cuenta y Huevo de Pascua Temático Mensual */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+          {/* Logo Oficial Contame Pues + Asesoría WhatsApp */}
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
             <TouchableOpacity
-              style={[styles.brandPill, { backgroundColor: theme.card, borderColor: theme.border }]}
-              onPress={() => setHubTab('cuenta')}
+              style={styles.logoTouch}
+              onPress={() => {
+                if (Platform.OS === 'web') {
+                  Linking.openURL('https://contamepues.com/');
+                } else {
+                  setHubTab('resumen');
+                }
+              }}
               activeOpacity={0.8}
+              accessibilityLabel="Ir a contamepues.com"
             >
-              <View style={[styles.statusDot, { backgroundColor: (userProfile && !userProfile.id.startsWith('user_')) ? theme.green : theme.amber }]} />
-              <Text style={[styles.brandTitle, { color: theme.text }]} numberOfLines={1}>
-                {userProfile?.avatarEmoji ? `${userProfile.avatarEmoji} ` : '👤 '}
-                {userProfile?.nombre ? String(userProfile.nombre).split(' ')[0] : 'Mi Cuenta'}
-              </Text>
+              <Image
+                source={require('./assets/logo.webp')}
+                style={isDesktop ? styles.brandLogoImage : styles.brandLogoImageMobile}
+                resizeMode="contain"
+              />
             </TouchableOpacity>
+
+            {/* BOTÓN ASESORÍA OFICIAL CONTAME PUES */}
+            <TouchableOpacity
+              style={styles.asesoriaBtn}
+              onPress={() => Linking.openURL('https://api.whatsapp.com/send?phone=573115417101&text=Buen%20d%C3%ADa%2C%20quiero%20saber%20m%C3%A1s%20de%20tus%20servicios.')}
+              activeOpacity={0.8}
+              accessibilityLabel="Asesoría SST Contame Pues"
+            >
+              <Text style={styles.asesoriaBtnText}>Asesoría 💬</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* NAVEGACIÓN DESKTOP SAAS (SOLO EN PANTALLA ANCHA) */}
+          {isDesktop && (
+            <View style={[styles.desktopNavTabs, { backgroundColor: theme.cardSubtle, borderColor: theme.border }]}>
+              <TouchableOpacity
+                style={[
+                  styles.desktopNavTab,
+                  hubTab === 'resumen' && { backgroundColor: '#F6AC13', borderColor: '#F6AC13', borderWidth: 1 }
+                ]}
+                onPress={() => setHubTab('resumen')}
+                activeOpacity={0.7}
+              >
+                <Text style={[styles.desktopNavTabText, { color: hubTab === 'resumen' ? '#1C2533' : theme.muted, fontWeight: hubTab === 'resumen' ? '900' : '600' }]}>
+                  💳 Resumen
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.desktopNavTab,
+                  hubTab === 'pro' && { backgroundColor: '#F6AC13', borderColor: '#F6AC13', borderWidth: 1 }
+                ]}
+                onPress={() => setHubTab('pro')}
+                activeOpacity={0.7}
+              >
+                <Text style={[styles.desktopNavTabText, { color: hubTab === 'pro' ? '#1C2533' : theme.muted, fontWeight: hubTab === 'pro' ? '900' : '600' }]}>
+                  ⚡ Opciones PRO
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.desktopNavTab,
+                  hubTab === 'cuenta' && { backgroundColor: '#F6AC13', borderColor: '#F6AC13', borderWidth: 1 }
+                ]}
+                onPress={() => setHubTab('cuenta')}
+                activeOpacity={0.7}
+              >
+                <Text style={[styles.desktopNavTabText, { color: hubTab === 'cuenta' ? '#1C2533' : theme.muted, fontWeight: hubTab === 'cuenta' ? '900' : '600' }]}>
+                  👤 Mi Cuenta
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {/* Iconos esenciales: Perfil, Tour Guiado, Privacidad y Tema */}
+          <View style={styles.topbarIconsRow}>
+            {/* Pill Cuenta de Usuario (Desktop o Tablet) */}
+            {isDesktop && (
+              <TouchableOpacity
+                style={[styles.brandPill, { backgroundColor: hubTab === 'cuenta' ? '#FFFBEB' : theme.card, borderColor: hubTab === 'cuenta' ? '#F6AC13' : theme.border }]}
+                onPress={() => setHubTab('cuenta')}
+                activeOpacity={0.8}
+              >
+                <View style={[styles.statusDot, { backgroundColor: (userProfile && !userProfile.id.startsWith('user_')) ? theme.green : '#F6AC13' }]} />
+                <Text style={[styles.brandTitle, { color: theme.text }]} numberOfLines={1}>
+                  {userProfile?.avatarEmoji ? `${userProfile.avatarEmoji} ` : '👤 '}
+                  {userProfile?.nombre ? String(userProfile.nombre).split(' ')[0] : 'Cuenta'}
+                </Text>
+              </TouchableOpacity>
+            )}
 
             {/* HUEVO DE PASCUA MENSUAL */}
             <TouchableOpacity
@@ -2404,54 +2487,7 @@ function MainApp() {
             >
               <Text style={{ fontSize: 16 }}>{getSeasonalEasterEgg(monthIndex).emoji}</Text>
             </TouchableOpacity>
-          </View>
 
-          {/* NAVEGACIÓN DESKTOP SAAS (SOLO EN PANTALLA ANCHA) */}
-          {isDesktop && (
-            <View style={[styles.desktopNavTabs, { backgroundColor: theme.cardSubtle, borderColor: theme.border }]}>
-              <TouchableOpacity
-                style={[
-                  styles.desktopNavTab,
-                  hubTab === 'resumen' && { backgroundColor: theme.greenSoft, borderColor: theme.green, borderWidth: 1 }
-                ]}
-                onPress={() => setHubTab('resumen')}
-                activeOpacity={0.7}
-              >
-                <Text style={[styles.desktopNavTabText, { color: hubTab === 'resumen' ? theme.green : theme.muted, fontWeight: hubTab === 'resumen' ? '900' : '600' }]}>
-                  💳 Resumen
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.desktopNavTab,
-                  hubTab === 'pro' && { backgroundColor: theme.greenSoft, borderColor: theme.green, borderWidth: 1 }
-                ]}
-                onPress={() => setHubTab('pro')}
-                activeOpacity={0.7}
-              >
-                <Text style={[styles.desktopNavTabText, { color: hubTab === 'pro' ? theme.green : theme.muted, fontWeight: hubTab === 'pro' ? '900' : '600' }]}>
-                  ⚡ Opciones PRO
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.desktopNavTab,
-                  hubTab === 'cuenta' && { backgroundColor: theme.greenSoft, borderColor: theme.green, borderWidth: 1 }
-                ]}
-                onPress={() => setHubTab('cuenta')}
-                activeOpacity={0.7}
-              >
-                <Text style={[styles.desktopNavTabText, { color: hubTab === 'cuenta' ? theme.green : theme.muted, fontWeight: hubTab === 'cuenta' ? '900' : '600' }]}>
-                  👤 Mi Cuenta
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
-
-          {/* Iconos esenciales: Tour Guiado, Privacidad y Tema */}
-          <View style={styles.topbarIconsRow}>
             <TouchableOpacity
               style={[styles.iconButton, { backgroundColor: theme.card, borderColor: theme.border }]}
               onPress={() => {
@@ -2464,7 +2500,7 @@ function MainApp() {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.iconButton, { backgroundColor: isAnySectionHidden ? theme.greenSoft : theme.card, borderColor: theme.border }]}
+              style={[styles.iconButton, { backgroundColor: isAnySectionHidden ? '#FEF3C7' : theme.card, borderColor: isAnySectionHidden ? '#F6AC13' : theme.border }]}
               onPress={toggleMasterPrivacy}
               accessibilityLabel="Modo Privacidad General"
             >
@@ -2674,10 +2710,10 @@ function MainApp() {
               </View>
             </View>
 
-            {/* ACCIONES RÁPIDAS OBSIDIAN FLUID */}
+            {/* ACCIONES RÁPIDAS CONTAME PUES */}
             <View style={styles.quickActionsContainer}>
               <TouchableOpacity
-                style={[styles.quickActionButton, { backgroundColor: theme.greenSoft, borderColor: theme.green }]}
+                style={[styles.quickActionButton, { backgroundColor: theme.isDark ? theme.brandSoft : '#FEF3C7', borderColor: '#F6AC13' }]}
                 onPress={() => {
                   setNewTipo('Ingreso');
                   setNewCat('Ingreso Sueldo');
@@ -2688,11 +2724,11 @@ function MainApp() {
                 activeOpacity={0.8}
               >
                 <Text style={{ fontSize: 18 }}>💰</Text>
-                <Text style={[styles.quickActionLabel, { color: theme.green }]}>＋ Ingreso</Text>
+                <Text style={[styles.quickActionLabel, { color: theme.isDark ? '#F6AC13' : '#92400E', fontWeight: '800' }]}>＋ Ingreso</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.quickActionButton, { backgroundColor: theme.redSoft, borderColor: theme.red }]}
+                style={[styles.quickActionButton, { backgroundColor: theme.isDark ? theme.redSoft : '#FEE2E2', borderColor: '#ED3432' }]}
                 onPress={() => {
                   setNewTipo('Egreso');
                   setNewCat('Supermercado');
@@ -2703,7 +2739,7 @@ function MainApp() {
                 activeOpacity={0.8}
               >
                 <Text style={{ fontSize: 18 }}>💸</Text>
-                <Text style={[styles.quickActionLabel, { color: theme.red }]}>－ Gasto</Text>
+                <Text style={[styles.quickActionLabel, { color: theme.isDark ? '#ED3432' : '#991B1B', fontWeight: '800' }]}>－ Gasto</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -4099,8 +4135,8 @@ function MainApp() {
             style={[
               styles.dockTab,
               hubTab === 'resumen' && {
-                backgroundColor: theme.greenSoft,
-                borderColor: theme.greenSoft,
+                backgroundColor: theme.isDark ? theme.brandSoft : '#FEF3C7',
+                borderColor: '#F6AC13',
                 borderWidth: 1
               }
             ]}
@@ -4112,7 +4148,7 @@ function MainApp() {
               style={[
                 styles.dockTabText,
                 {
-                  color: hubTab === 'resumen' ? theme.green : theme.muted,
+                  color: hubTab === 'resumen' ? (theme.isDark ? '#F6AC13' : '#92400E') : theme.muted,
                   fontWeight: hubTab === 'resumen' ? '900' : '600'
                 }
               ]}
@@ -4120,7 +4156,7 @@ function MainApp() {
               Resumen
             </Text>
             {hubTab === 'resumen' && (
-              <View style={[styles.dockActiveDot, { backgroundColor: theme.green }]} />
+              <View style={[styles.dockActiveDot, { backgroundColor: '#F6AC13' }]} />
             )}
           </TouchableOpacity>
 
@@ -4128,8 +4164,8 @@ function MainApp() {
             style={[
               styles.dockTab,
               hubTab === 'pro' && {
-                backgroundColor: theme.greenSoft,
-                borderColor: theme.greenSoft,
+                backgroundColor: theme.isDark ? theme.brandSoft : '#FEF3C7',
+                borderColor: '#F6AC13',
                 borderWidth: 1
               }
             ]}
@@ -4141,7 +4177,7 @@ function MainApp() {
               style={[
                 styles.dockTabText,
                 {
-                  color: hubTab === 'pro' ? theme.green : theme.muted,
+                  color: hubTab === 'pro' ? (theme.isDark ? '#F6AC13' : '#92400E') : theme.muted,
                   fontWeight: hubTab === 'pro' ? '900' : '600'
                 }
               ]}
@@ -4149,7 +4185,7 @@ function MainApp() {
               Opciones PRO
             </Text>
             {hubTab === 'pro' && (
-              <View style={[styles.dockActiveDot, { backgroundColor: theme.green }]} />
+              <View style={[styles.dockActiveDot, { backgroundColor: '#F6AC13' }]} />
             )}
           </TouchableOpacity>
 
@@ -4157,8 +4193,8 @@ function MainApp() {
             style={[
               styles.dockTab,
               hubTab === 'cuenta' && {
-                backgroundColor: theme.greenSoft,
-                borderColor: theme.greenSoft,
+                backgroundColor: theme.isDark ? theme.brandSoft : '#FEF3C7',
+                borderColor: '#F6AC13',
                 borderWidth: 1
               }
             ]}
@@ -4170,7 +4206,7 @@ function MainApp() {
               style={[
                 styles.dockTabText,
                 {
-                  color: hubTab === 'cuenta' ? theme.green : theme.muted,
+                  color: hubTab === 'cuenta' ? (theme.isDark ? '#F6AC13' : '#92400E') : theme.muted,
                   fontWeight: hubTab === 'cuenta' ? '900' : '600'
                 }
               ]}
@@ -4178,7 +4214,7 @@ function MainApp() {
               Mi Cuenta
             </Text>
             {hubTab === 'cuenta' && (
-              <View style={[styles.dockActiveDot, { backgroundColor: theme.green }]} />
+              <View style={[styles.dockActiveDot, { backgroundColor: '#F6AC13' }]} />
             )}
           </TouchableOpacity>
         </View>
@@ -5352,7 +5388,7 @@ function MainApp() {
             fabPosition === 'izquierda' ? { left: 20, right: undefined } :
             fabPosition === 'centro' ? { left: '50%', right: undefined, transform: [{ translateX: -27 }] } :
             { right: 20, left: undefined },
-            { backgroundColor: theme.green },
+            { backgroundColor: '#F6AC13' },
             theme.shadow
           ]}
           onPress={() => {
@@ -5746,6 +5782,36 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   topbar: { paddingHorizontal: 16, paddingTop: 10, paddingBottom: 12 },
   topbarMainRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
+  logoTouch: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  brandLogoImage: {
+    width: 175,
+    height: 44,
+  },
+  brandLogoImageMobile: {
+    width: 130,
+    height: 34,
+  },
+  asesoriaBtn: {
+    backgroundColor: '#FFD64F',
+    paddingHorizontal: 13,
+    paddingVertical: 7,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: '#F6AC13',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  asesoriaBtnText: {
+    fontSize: 12,
+    fontWeight: '900',
+    color: '#212224',
+    letterSpacing: 0.2,
+  },
   brandPill: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 999, borderWidth: 1 },
   statusDot: { width: 8, height: 8, borderRadius: 4 },
   brandTitle: { fontSize: 13, fontWeight: '800', letterSpacing: 0.3 },
@@ -6139,7 +6205,7 @@ const styles = StyleSheet.create({
 
   // Botón Flotante de Acción Rápida (FAB)
   floatingFabBtn: { position: 'absolute', right: 20, bottom: 84, width: 54, height: 54, borderRadius: 27, alignItems: 'center', justifyContent: 'center', elevation: 12, zIndex: 999 },
-  floatingFabIcon: { fontSize: 24, color: '#FFFFFF', fontWeight: '900' },
+  floatingFabIcon: { fontSize: 24, color: '#1B2432', fontWeight: '900' },
 
   // Teclado Numérico Fricción-Cero (Numpad Modal)
   numpadDisplayBox: { padding: 16, borderRadius: 18, alignItems: 'center', marginVertical: 8, borderWidth: 1 },
